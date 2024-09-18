@@ -1,7 +1,12 @@
 namespace Bankomaten;
 class PIN
 {
-    private string readonly _pin;
+    private readonly string  _pin;
+
+    public PIN(string pin)
+    {
+        _pin = pin;
+    }
 
     public bool Is_PIN(string pin)
     {
