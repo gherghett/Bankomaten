@@ -1,7 +1,6 @@
-
-internal class Program
+class InputHandler
 {
-    static int GetInt(string prompt)
+    public static int GetInt(string prompt)
     {
         while (true)
         {
@@ -14,7 +13,7 @@ internal class Program
             Console.WriteLine("skriv en int.");
         }
     }
-    static char GetChar(string prompt)
+    public static char GetChar(string prompt)
     {
         Prompt(prompt);
         char output;
@@ -27,7 +26,7 @@ internal class Program
         return output;
 
     }
-    static char GetCharOfSet(string prompt, char[] acceptedChars)
+    public static char GetCharOfSet(string prompt, char[] acceptedChars)
     {
         while (true)
         {
@@ -41,7 +40,7 @@ internal class Program
         }
 
     }
-    static bool Contains(char c, char[] chars)
+    public static bool Contains(char c, char[] chars)
     {
         for (int i = 0; i < chars.Length; i++)
         {
@@ -52,14 +51,17 @@ internal class Program
         }
         return false;
     }
-    static string GetString(string prompt)
+    public static string GetString(string prompt)
     {
         Prompt(prompt);
         return Console.ReadLine();
     }
-    static void Prompt(string prompt) =>
+    private static void Prompt(string prompt) =>
         Console.Write($"{prompt}: ");
 
+}
+internal class Program
+{
     static int AttemptLogIn(string pin, List<string> pinCodes)
     {
         int index;
@@ -82,7 +84,7 @@ internal class Program
 
     public static int WithdrawMoney(int accountBalance)
     {
-        int withdrawal = GetInt("Hur mkt vill du ta ut?");
+        int withdrawal = InputHandler.GetInt("Hur mkt vill du ta ut?");
         if (IsValidWithdrawal(accountBalance, withdrawal))
         {
             Console.WriteLine($"Du har tagit ut {withdrawal}");
@@ -97,7 +99,7 @@ internal class Program
 
     public static int DepositMoney(int accountBalance)
     {
-        int amount = GetInt("Hur mkt vill du sätta in?");
+        int amount = InputHandler.GetInt("Hur mkt vill du sätta in?");
         if (amount < 0)
         {
             Console.WriteLine("Ogiltig mängd pengar");
@@ -110,7 +112,7 @@ internal class Program
     public static void SendMoney(List<int> balance, int from)
     {
         int to = GetUser("Vem vill du skicka till?", balance.Count);
-        int amount = GetInt("Hur mycket vill du skicka");
+        int amount = InputHandler.GetInt("Hur mycket vill du skicka");
         if (balance[from] >= amount)
         {
             balance[to] += amount;
@@ -127,7 +129,7 @@ internal class Program
     {
         while (true)
         {
-            int userId = GetInt(prompt);
+            int userId = InputHandler.GetInt(prompt);
             if (userId > usersLength || userId < 0)
             {
                 Console.WriteLine($"Användare ska vara mellan 0 - {usersLength - 1}");
@@ -143,7 +145,7 @@ internal class Program
     {
         while (index >= 0)
         {
-            char choice = GetCharOfSet( "[T]a ut pengar, " +
+            char choice = InputHandler.GetCharOfSet( "[T]a ut pengar, " +
                                         "[S]ätt in pengar, " +
                                         "[K]olla saldo, "+
                                         "eller Sk[I]cka pengar! " +
@@ -177,11 +179,11 @@ internal class Program
         int index = -1;
         while(index < 0)
         {
-            char choice = GetCharOfSet("[L]ogga in eller [S]kapa nytt konto ([Q]uit)", ['L', 'S', 'Q']);
+            char choice = InputHandler.GetCharOfSet("[L]ogga in eller [S]kapa nytt konto ([Q]uit)", ['L', 'S', 'Q']);
             switch (choice)
             {
                 case 'L':
-                    index = AttemptLogIn(GetString("skriv in PIN"), pinCodes);
+                    index = AttemptLogIn(InputHandler.GetString("skriv in PIN"), pinCodes);
                     break;
                 case 'S':
                     pinCodes.Add(GetUniquePIN("Skriv in PIN för ditt nya konto", pinCodes));
@@ -200,7 +202,7 @@ internal class Program
         string newPin = "";
         while(string.IsNullOrWhiteSpace(newPin))
         {
-            newPin = GetString(prompt);
+            newPin = InputHandler.GetString(prompt);
             foreach(string pinCode in pinCodes)
             {
                 if(newPin == pinCode)
