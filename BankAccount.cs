@@ -51,5 +51,5 @@ class BankAccount
         bankUser.IsPinwordCorrect(pin);
     
     public bool IsValidWithdrawal(decimal withdrawal) =>
-        withdrawal > 0m && balance - withdrawal > 0;
+        withdrawal >= 0m && balance - withdrawal >= 0m;
 }
