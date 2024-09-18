@@ -31,15 +31,4 @@ class BankCommunicator
     private BankAccount? AreCorrectCredentials(string userName, string pinword ) =>
         accounts.Where(a => a.UserName == userName).SingleOrDefault(a => a.IsPinwordCorrect(pinword));
 
-
-    static int AttemptLogIn(string pin, List<string> pinCodes)
-    {
-        int index;
-        index = pinCodes.IndexOf(pin);
-        if (index < 0)
-        {
-            Console.WriteLine("Fel, försök igen.");
-        }
-        return index;
-    }
 }
