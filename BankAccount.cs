@@ -7,25 +7,36 @@ class BankAccount
     private BankUser bankUser;
     private decimal balance;
 
-    private List<IAccountAction> history;
+    public List<IAccountAction> History {get;}
 
     public BankAccount(BankUser bankUser, decimal balance)
     {
         this.bankUser = bankUser;
         this.balance = balance;
-        this.history = new List<IAccountAction>();
+        this.History = new List<IAccountAction>();
     }
+
+    public IAccountActionResult Withdraw(decimal amount, int toId) =>
+        IsValidWithdrawal(amount) 
+        ? new AccountActionResultSuccess(WithdrawalAction(amount,toId), $"Du förde över {amount} till konto {toId}") 
+        : new AccountActionResultFailure(new AccountOverCharged(amount-balance), $"Kunde inte skicka pengarna");
 
     public IAccountActionResult Withdraw(decimal amount) =>
         IsValidWithdrawal(amount) 
         ? new AccountActionResultSuccess(WithdrawalAction(amount), $"Du tog ut {amount}")
         : new AccountActionResultFailure(new AccountOverCharged(amount-balance), $"Kunde inte ta ut pengarna");
+    private AccountTransfer WithdrawalAction(decimal amount, int toId)
+    {
+        balance -= amount;
+        return (AccountTransfer)AddToHistoryAndReturn(new AccountTransfer(amount,toId));
+    }
     
     private AccountWithdrawal WithdrawalAction(decimal amount)
     {
         balance -= amount;
         return (AccountWithdrawal)AddToHistoryAndReturn(new AccountWithdrawal(amount));
     }
+
 
     public IAccountActionResult Deposit(decimal amount)
     {
@@ -43,7 +54,7 @@ class BankAccount
 
     private IAccountAction AddToHistoryAndReturn(IAccountAction action)
     {
-        history.Add(action);
+        History.Add(action);
         return action;
     }
 

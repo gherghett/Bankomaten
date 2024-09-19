@@ -4,7 +4,7 @@ interface IBankTransactionService
 {
     public IAccountActionResult Withdraw(BankAccount account, decimal amount);
     public IAccountActionResult Deposit(BankAccount account, decimal amount);
-    public IAccountActionResult SendMoney(BankAccount fromAccount, BankAccount toAccount, decimal amount);
+    public IAccountActionResult SendMoney(List<BankAccount> accounts, BankAccount fromAccount, string toAccount, decimal amount);
 }
 class BankTransactionService : IBankTransactionService
 {
@@ -18,13 +18,22 @@ class BankTransactionService : IBankTransactionService
         return account.Deposit(amount);
     }
 
-    public IAccountActionResult SendMoney(BankAccount fromAccount, BankAccount toAccount, decimal amount)
+    public IAccountActionResult SendMoney(List<BankAccount> accounts, BankAccount fromAccount, string toUserName, decimal amount)
     {
-        IAccountActionResult result = fromAccount.Withdraw(amount);
-        if (result is AccountActionResultFailure)
+        BankAccount toAccount = accounts.Where(a=>a.UserName == toUserName).SingleOrDefault();
+        if (toAccount == null)
         {
-            return result;
+            return new AccountActionResultFailure(new AccountActionFail(), $"Kunde inte hitta kontot att skicka till");
         }
-        return toAccount.Deposit(amount, fromAccount.Id);
+        IAccountActionResult sendingResult = fromAccount.Withdraw(amount, toAccount.Id);
+        if( sendingResult is AccountActionResultFailure )
+        {
+            return sendingResult;
+        }
+        else
+        {
+            toAccount.Deposit(amount, fromAccount.Id);
+        }
+        return sendingResult;
     }
 }

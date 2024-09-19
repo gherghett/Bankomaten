@@ -58,9 +58,10 @@ class MainMenu
             char choice = InputHandler.GetCharOfSet( "[T]a ut pengar, " +
                                         "[S]ätt in pengar, " +
                                         "[K]olla saldo, "+
+                                        "Se [H]istoria, " +
                                         "eller Sk[I]cka pengar! " +
                                         "([L]ogga ut/[Q]uit)",
-                                         ['T', 'S', 'K', 'I', 'L', 'Q']);
+                                         ['T', 'S', 'K','H', 'I', 'L', 'Q']);
             switch (choice)
             {
                 case 'T':
@@ -71,6 +72,9 @@ class MainMenu
                     break;
                 case 'K':
                     UI.DisplayBalance(connection.Account);
+                    break;
+                case 'H':
+                    UI.DisplayHistory(connection.Account);
                     break;
                 case 'I':
                     SendMoney();

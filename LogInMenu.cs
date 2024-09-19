@@ -10,10 +10,10 @@ class LogInMenu
     }
     public IBankConnection ShowMenu()
     {
-        while(true)
+        while (true)
         {
             // InputHandler.GetString("L, S, Q")[0];
-            char choice = InputHandler.GetString("L, S, Q")[0]; //InputHandler.GetCharOfSet("[L]ogga in eller ([Q]uit)", ['L', 'Q']);
+            char choice = InputHandler.GetCharOfSet("[L]ogga in eller ([Q]uit)", ['L', 'Q']);
             switch (choice)
             {
                 case 'L':
@@ -24,7 +24,6 @@ class LogInMenu
                     Console.WriteLine(bankConnection.LoginMessage);
                     if (bankConnection is ISecureBankConnection secureConnection)
                     {
-                        //var mainMenu = new MainMenu(secureConnection, transactionService);
                         return secureConnection;
                     }
                     break;

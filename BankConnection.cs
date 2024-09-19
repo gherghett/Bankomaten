@@ -30,27 +30,11 @@ class SecureBankConnection : ISecureBankConnection
 
     private IBankTransactionService transactionService;
 
-    public IAccountActionResult Withdraw(decimal amount) => Account.Withdraw(amount);
+    public IAccountActionResult Withdraw(decimal amount) => transactionService.Withdraw(Account,amount);
 
-    public IAccountActionResult Deposit(decimal amount) => Account.Deposit(amount);
+    public IAccountActionResult Deposit(decimal amount) => transactionService.Deposit(Account, amount);
 
-    public IAccountActionResult SendMoney(string to, decimal amount)
-    {
-        BankAccount toAccount = bankAccounts.Where(a=>a.UserName == to).SingleOrDefault();
-        if (toAccount == null)
-        {
-            return new AccountActionResultFailure(new AccountActionFail(), $"Kunde inte hitta kontot att skicka till");
-        }
-        IAccountActionResult result = Withdraw(amount);
-        if( result is AccountActionResultFailure )
-        {
-            return result;
-        }
-        else
-        {
-            return toAccount.Deposit(amount, Account.Id);
-        }
-    }
+    public IAccountActionResult SendMoney(string to, decimal amount) => transactionService.SendMoney(bankAccounts, Account, to, amount);
 }
 
 class FailedBankConnection : IBankConnection

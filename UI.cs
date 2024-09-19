@@ -1,3 +1,4 @@
+
 namespace Bankomaten;
 class UI
 {
@@ -9,4 +10,13 @@ class UI
         Console.WriteLine($"Välkommen {account.UserName}");
         DisplayBalance(account);
     }
+
+    internal static void DisplayHistory(BankAccount account)
+    {
+        foreach(IAccountAction action in account.History)
+        {
+            Console.WriteLine(action);
+        }
+    }
+
 }

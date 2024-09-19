@@ -2,17 +2,32 @@ namespace Bankomaten;
 
 public interface IAccountAction
 {
-    decimal Amount { get; }
 }
-class AccountActionFail : IAccountAction
+public record AccountAction(decimal Amount) : IAccountAction
 {
-    public decimal Amount {get;}
+    public DateTime Date { get; init; } = DateTime.Now;
 }
-public record AccountOverCharged(decimal Amount) :  IAccountAction;
-public record AccountWithdrawal(decimal Amount) : IAccountAction;
-public record AccountDeposit(decimal Amount) : IAccountAction;
-public record AccountTransfer(decimal Amount, int ToId) : IAccountAction;
-public record AccountReceive(decimal Amount, int FromId) : IAccountAction;
+record AccountActionFail() : IAccountAction;
+public record AccountOverCharged(decimal Amount) :  AccountAction(Amount)
+{
+    public override string ToString() => $"{Date} Ett utdrag kunde inte genomföras på grund av ett undeskott på {Amount}";
+}
+public record AccountWithdrawal(decimal Amount) : AccountAction(Amount)
+{
+    public override string ToString() => $"{Date} Ett utdrag på {Amount}";
+}
+public record AccountDeposit(decimal Amount) : AccountAction(Amount)
+{
+    public override string ToString() => $"{Date} En insättning på {Amount}";
+}
+public record AccountTransfer(decimal Amount, int ToId) : AccountAction(Amount)
+{
+    public override string ToString() => $"{Date} En överföring på {Amount} till {ToId}";
+}
+public record AccountReceive(decimal Amount,  int FromId) : AccountAction(Amount)
+{
+    public override string ToString() => $"{Date} En insättning från {FromId} på {Amount}";
+}
 interface IAccountActionResult 
 {
     public string Message {get;}
