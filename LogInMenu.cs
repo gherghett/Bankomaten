@@ -8,10 +8,9 @@ class LogInMenu
         this.bankCommunicator = communicator;
         this.transactionService = transactionService;
     }
-    public void ShowMenu()
+    public IBankConnection ShowMenu()
     {
-        int index = -1;
-        while(index > -2)
+        while(true)
         {
             // InputHandler.GetString("L, S, Q")[0];
             char choice = InputHandler.GetString("L, S, Q")[0]; //InputHandler.GetCharOfSet("[L]ogga in eller ([Q]uit)", ['L', 'Q']);
@@ -25,14 +24,14 @@ class LogInMenu
                     Console.WriteLine(bankConnection.LoginMessage);
                     if (bankConnection is ISecureBankConnection secureConnection)
                     {
-                        var mainMenu = new MainMenu(secureConnection, transactionService);
-                        index = mainMenu.Show();
+                        //var mainMenu = new MainMenu(secureConnection, transactionService);
+                        return secureConnection;
                     }
                     break;
                 case 'S':
                     break;
                 case 'Q':
-                    return;
+                    return new FailedBankConnection();
             }
         }
     }

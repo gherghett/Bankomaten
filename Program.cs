@@ -5,7 +5,7 @@ internal class Program
     {
         BankCommunicator bankCommunicator = new BankCommunicator();
         IBankTransactionService transactionService = new BankTransactionService();
-        LogInMenu logInMenu = new LogInMenu(bankCommunicator, transactionService);
-        logInMenu.ShowMenu();
+        AppController app = new AppController(bankCommunicator, transactionService);
+        app.Run();
     }
 }

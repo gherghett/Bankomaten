@@ -5,7 +5,7 @@ interface IBankConnection
     public string LoginMessage {get;}
 }
 
-interface ISecureBankConnection
+interface ISecureBankConnection : IBankConnection
 {
     public BankAccount Account {get;}
     public IAccountActionResult Deposit(decimal deposit);
@@ -14,7 +14,7 @@ interface ISecureBankConnection
 
 }
 
-class SecureBankConnection : IBankConnection, ISecureBankConnection
+class SecureBankConnection : ISecureBankConnection
 {
     //this list is stand in for a connection to database
     private List<BankAccount> bankAccounts;
