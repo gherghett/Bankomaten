@@ -8,7 +8,6 @@ interface IBankConnection
 interface ISecureBankConnection
 {
     public BankAccount Account {get;}
-
     public IAccountActionResult Deposit(decimal deposit);
     public IAccountActionResult SendMoney(string to, decimal amount);
     public IAccountActionResult Withdraw(decimal amount);
@@ -20,12 +19,16 @@ class SecureBankConnection : IBankConnection, ISecureBankConnection
     //this list is stand in for a connection to database
     private List<BankAccount> bankAccounts;
     public BankAccount Account {get;}
-    public SecureBankConnection(int id, List<BankAccount> bankAccounts)
+    public SecureBankConnection(int id, List<BankAccount> bankAccounts, IBankTransactionService bankTransactionService)
     {
         Account = bankAccounts.Where(a=>a.Id ==id).SingleOrDefault();
         this.bankAccounts = bankAccounts.ToList();
+        this.transactionService = bankTransactionService;
     }
+    
     public string LoginMessage => "Du är inloggad.";
+
+    private IBankTransactionService transactionService;
 
     public IAccountActionResult Withdraw(decimal amount) => Account.Withdraw(amount);
 

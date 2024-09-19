@@ -4,8 +4,8 @@ internal class Program
     static void Main()
     {
         BankCommunicator bankCommunicator = new BankCommunicator();
-        LogInMenu logInMenu = new LogInMenu(bankCommunicator);
-
+        IBankTransactionService transactionService = new BankTransactionService();
+        LogInMenu logInMenu = new LogInMenu(bankCommunicator, transactionService);
         logInMenu.ShowMenu();
     }
 }

@@ -1,6 +1,3 @@
-using System.IO.Compression;
-using System.Net.Security;
-
 namespace Bankomaten;
 
 class BankCommunicator
@@ -19,16 +16,71 @@ class BankCommunicator
         };
     }
 
-    public IBankConnection CreateSecureConnection(string userName, string pinword)
+    public IBankConnection CreateSecureConnection(string userName, string pinword, IBankTransactionService transactionService)
     {
         BankAccount? loggedInAccount = AreCorrectCredentials(userName, pinword);
-        if(loggedInAccount != null)
-            return new SecureBankConnection(loggedInAccount.Id, accounts);
+        if (loggedInAccount != null)
+        {
+            return new BankConnectionBuilder()
+                       .SetAccount(loggedInAccount)
+                       .SetAccounts(accounts)
+                       .SetTransActionService(transactionService)
+                       .Build();
+        }
         else
             return new FailedBankConnection();
+
     }
 
     private BankAccount? AreCorrectCredentials(string userName, string pinword ) =>
         accounts.Where(a => a.UserName == userName).SingleOrDefault(a => a.IsPinwordCorrect(pinword));
+}
 
+interface IBankConnectionBuilder {}
+interface IBankConnectionBuilderExpectingLoggedInAccount
+{
+    public IBankConnectionBuilderExpectingAccountsDB SetAccount(BankAccount? loggedInAccount);
+}
+interface IBankConnectionBuilderExpectingAccountsDB
+{
+    public IBankConnectionBuilderExpectingTransactionService SetAccounts(List<BankAccount> accounts);
+}
+interface IBankConnectionBuilderExpectingTransactionService
+{
+    public IBankConnectionBuilderReady SetTransActionService(IBankTransactionService transactionService);
+}
+interface IBankConnectionBuilderReady
+{
+    public IBankConnection Build();
+}
+class BankConnectionBuilder : IBankConnectionBuilder,
+                              IBankConnectionBuilderExpectingLoggedInAccount,
+                              IBankConnectionBuilderExpectingAccountsDB,
+                              IBankConnectionBuilderExpectingTransactionService,
+                              IBankConnectionBuilderReady
+{
+    private int id;
+    private List<BankAccount> accounts;
+    private IBankTransactionService bankTransactionService;
+    public IBankConnectionBuilderExpectingAccountsDB SetAccount(BankAccount loggedInAccount)
+    {
+        id = loggedInAccount.Id;
+        return this as IBankConnectionBuilderExpectingAccountsDB;
+    }
+
+    public IBankConnectionBuilderExpectingTransactionService SetAccounts(List<BankAccount> accounts)
+    {
+        this.accounts = accounts;
+        return this as IBankConnectionBuilderExpectingTransactionService;
+    }
+
+    IBankConnectionBuilderReady IBankConnectionBuilderExpectingTransactionService.SetTransActionService(IBankTransactionService transactionService)
+    {
+        this.bankTransactionService = transactionService;
+        return this as IBankConnectionBuilderReady;
+    }
+    public IBankConnection Build()
+    {
+        return new SecureBankConnection(id, accounts, bankTransactionService);
+    }
 }

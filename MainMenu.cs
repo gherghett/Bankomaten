@@ -1,7 +1,14 @@
 namespace Bankomaten;
-static class MainMenu
+class MainMenu
 {
-    public static IAccountAction WithdrawMoney(ISecureBankConnection connection)
+    private ISecureBankConnection connection;
+    private IBankTransactionService bankTransactionService;
+    public MainMenu(ISecureBankConnection secureBankConnection, IBankTransactionService bankTransactionService)
+    {
+        this.connection = secureBankConnection;
+        this.bankTransactionService = bankTransactionService;
+    }
+    public IAccountAction WithdrawMoney()
     {
         decimal withdrawal = InputHandler.GetInt("Hur mkt vill du ta ut?");
         IAccountActionResult result = connection.Withdraw(withdrawal);
@@ -9,7 +16,7 @@ static class MainMenu
         return result.Action;
     }
 
-    public static IAccountAction DepositMoney(ISecureBankConnection connection)
+    public IAccountAction DepositMoney()
     {
         decimal deposit = InputHandler.GetInt("Hur mkt vill du sätta in?");
         IAccountActionResult result = connection.Deposit(deposit);
@@ -17,7 +24,7 @@ static class MainMenu
         return result.Action;
     }
 
-    public static void SendMoney(ISecureBankConnection connection)
+    public void SendMoney()
     {
         string to = InputHandler.GetString("Vem vill du skicka till?");
         decimal amount = InputHandler.GetInt("Hur mycket vill du skicka?");
@@ -41,7 +48,7 @@ static class MainMenu
         }
     }
 
-    public static int Show(ISecureBankConnection connection)
+    public int Show()
     {
         int index = 0;
         UI.DisplayWelcome(connection.Account);
@@ -57,16 +64,16 @@ static class MainMenu
             switch (choice)
             {
                 case 'T':
-                    WithdrawMoney(connection);
+                    WithdrawMoney();
                     break;
                 case 'S':
-                    DepositMoney(connection);
+                    DepositMoney();
                     break;
                 case 'K':
                     UI.DisplayBalance(connection.Account);
                     break;
                 case 'I':
-                    SendMoney(connection);
+                    SendMoney();
                     break;
                 case 'L': //logout
                     return -1;
